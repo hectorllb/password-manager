@@ -1,42 +1,38 @@
 workflows:
   ios-workflow:
     name: iOS Workflow
-    instance_type: mac_mini
+    instance_type: mac_mini_m1
+    max_build_duration: 60
     environment:
       flutter: stable
-      xcode: 13.4.1
+      xcode: latest
       cocoapods: default
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
     scripts:
-      - name: Set up code signing
+      - name: Set up Flutter
         script: |
-          echo $IOS_APP_STORE_CONNECT_API_KEY_BASE64 | base64 --decode > /tmp/api_key.p8
-          cat >> $CM_BUILD_DIR/ios/Runner/ExportOptions.plist << EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>app-store</string>
-              <key>teamID</key>
-              <string>$TEAM_ID</string>
-          </dict>
-          </plist>
-          EOF
-      - name: Get Flutter packages
-        script: flutter packages pub get
-      - name: Install CocoaPods dependencies
+          flutter --version
+          flutter pub get
+      - name: Pod install
         script: |
           cd ios
           pod install
-      - name: Flutter build iOS
+      - name: Build iOS
         script: |
           flutter build ios --release --no-codesign
     artifacts:
+      - build/**/outputs/bundle/**/*.aab
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/**/mapping.txt
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - flutter_drive.log
-    # publishing:
-    #   app_store_connect:
-    #     api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-    #     key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-    #     issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+    publishing:
+      email:
+        recipients:
+          - tu_email@ejemplo.com
