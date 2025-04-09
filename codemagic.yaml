@@ -4,7 +4,7 @@ workflows:
     instance_type: mac_mini
     environment:
       flutter: stable
-      xcode: latest
+      xcode: 14.2
       cocoapods: default
     scripts:
       - name: Set up code signing
