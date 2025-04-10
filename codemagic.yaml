@@ -16,15 +16,52 @@ workflows:
     scripts:
       - name: Set up Flutter
         script: |
-          flutter --version
-          flutter pub get
+          # Imprime el directorio actual para depuración
+          pwd
+          ls -la
+
+          # Si tu proyecto está en la raíz del repositorio
+          if [ -f "pubspec.yaml" ]; then
+            echo "Proyecto encontrado en el directorio raíz"
+            flutter --version
+            flutter pub get
+          # Si tu proyecto está en un subdirectorio (ajusta 'nombre_subdirectorio' según sea necesario)
+          elif [ -d "nombre_subdirectorio" ] && [ -f "nombre_subdirectorio/pubspec.yaml" ]; then
+            echo "Proyecto encontrado en subdirectorio"
+            cd nombre_subdirectorio
+            flutter --version
+            flutter pub get
+          else
+            echo "No se pudo encontrar el proyecto Flutter. Listando directorios:"
+            find . -name "pubspec.yaml"
+            exit 1
+          fi
       - name: Pod install
         script: |
-          cd ios
-          pod install
+          # Asegúrate de estar en el directorio correcto que contiene la carpeta ios
+          if [ -d "ios" ]; then
+            cd ios
+            pod install
+          elif [ -d "nombre_subdirectorio/ios" ]; then
+            cd nombre_subdirectorio/ios
+            pod install
+          else
+            echo "No se pudo encontrar el directorio iOS"
+            find . -type d -name "ios"
+            exit 1
+          fi
       - name: Build iOS
         script: |
-          flutter build ios --release --no-codesign
+          # Asegúrate de estar en el directorio raíz del proyecto Flutter
+          if [ -f "pubspec.yaml" ]; then
+            flutter build ios --release --no-codesign
+          elif [ -d "nombre_subdirectorio" ] && [ -f "nombre_subdirectorio/pubspec.yaml" ]; then
+            cd nombre_subdirectorio
+            flutter build ios --release --no-codesign
+          else
+            echo "No se pudo encontrar el proyecto Flutter para compilar"
+            exit 1
+          fi
     artifacts:
       - build/**/outputs/bundle/**/*.aab
       - build/**/outputs/**/*.apk
@@ -35,4 +72,4 @@ workflows:
     publishing:
       email:
         recipients:
-          - tu_email@ejemplo.com
+          - hectordelallaveballesteros@gmail.es

@@ -1,0 +1,56 @@
+name: secure_vault
+description: A modern password manager application for iOS.
+
+# La versión sigue el formato major.minor.patch+build_number
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Almacenamiento seguro
+  flutter_secure_storage: ^8.0.0
+
+  # Autenticación biométrica
+  local_auth: ^2.1.6
+
+  # Criptografía
+  crypto: ^3.0.3
+
+  # Generación de IDs únicos
+  uuid: ^3.0.7
+
+  # Iconos y UI
+  cupertino_icons: ^1.0.5
+
+  # Utilidades
+  intl: ^0.18.1
+  path_provider: ^2.1.1
+  share_plus: ^7.1.0
+  url_launcher: ^6.1.14
+
+  # Formato y validación
+  email_validator: ^2.1.17
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.3
+
+flutter:
+  uses-material-design: true
+
+  # Aquí puedes añadir assets como imágenes, fuentes, etc.
+  # assets:
+  #   - assets/images/
+
+  # fonts:
+  #   - family: Roboto
+  #     fonts:
+  #       - asset: fonts/Roboto-Regular.ttf
+  #       - asset: fonts/Roboto-Bold.ttf
+  #         weight: 700
